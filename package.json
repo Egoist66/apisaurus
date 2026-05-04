@@ -2,6 +2,10 @@
   "name": "apisaurus",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.27.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

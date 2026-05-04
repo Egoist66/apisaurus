@@ -96,6 +96,7 @@ pnpm docker:logs
 
 - `DATABASE_URL`
 - `AUTH_SECRET`
+- `NEXTAUTH_SECRET` - опционально, если хочешь дублировать секрет в стандартном имени для `next-auth`
 
 В проект уже добавлен `vercel-build`, который делает:
 
@@ -109,10 +110,18 @@ prisma generate && prisma migrate deploy && next build
 2. применяются все миграции из `prisma/migrations`;
 3. собирается Next.js приложение.
 
+Рекомендуемые настройки проекта в Vercel:
+
+- Framework Preset: `Next.js`
+- Install Command: `pnpm install`
+- Build Command: `pnpm vercel-build`
+- Output Directory: оставить пустым
+
 Рекомендуется:
 
 - использовать отдельную production-базу;
 - для preview deploys указать отдельный `DATABASE_URL`, если не хочешь, чтобы preview меняли production-схему.
+- если не хочешь, чтобы preview-деплои применяли миграции в общей базе, используй отдельную preview-базу или поменяй Build Command для preview-окружения.
 
 ### Быстрый запуск без миграций
 
