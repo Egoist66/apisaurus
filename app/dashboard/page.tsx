@@ -14,7 +14,7 @@ import { Project, Collection } from '@/types';
 type View = 'projects' | 'editor' | 'collections' | 'tester';
 
 export default function DashboardPage() {
-  const { user, token, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const { theme } = useTheme();
   const router = useRouter();
   const [activeView, setActiveView] = useState<View>('projects');
@@ -35,16 +35,16 @@ export default function DashboardPage() {
   }, [user, isLoading, router]);
 
   useEffect(() => {
-    if (token) {
+    if (user) {
       fetchData();
     }
-  }, [token]);
+  }, [user]);
 
   const fetchData = async () => {
     try {
       const [projectsRes, collectionsRes] = await Promise.all([
-        fetch('/api/projects', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('/api/collections', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/projects'),
+        fetch('/api/collections'),
       ]);
 
       if (projectsRes.ok) setProjects(await projectsRes.json());
@@ -71,7 +71,6 @@ export default function DashboardPage() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ name, description }),
     });
@@ -96,7 +95,6 @@ export default function DashboardPage() {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(project),
     });
@@ -110,7 +108,6 @@ export default function DashboardPage() {
   const deleteProject = async (id: string) => {
     const res = await fetch(`/api/projects/${id}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
     });
     if (res.ok) {
       setProjects(projects.filter(p => p.id !== id));
@@ -126,7 +123,6 @@ export default function DashboardPage() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ name, description }),
     });
@@ -142,7 +138,6 @@ export default function DashboardPage() {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(collection),
     });
@@ -156,7 +151,6 @@ export default function DashboardPage() {
   const deleteCollection = async (id: string) => {
     const res = await fetch(`/api/collections/${id}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
     });
     if (res.ok) {
       setCollections(collections.filter(c => c.id !== id));

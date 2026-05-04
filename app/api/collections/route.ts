@@ -1,46 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readJsonFile, writeJsonFile, generateId } from '@/lib/storage';
+import { prisma } from '@/lib/prisma';
 import { getAuthUser } from '@/lib/auth-middleware';
 import { Collection } from '@/types';
 
-function getCollections(): Collection[] {
-  return readJsonFile<Collection[]>('collections.json', []);
-}
-
-function saveCollections(collections: Collection[]): void {
-  writeJsonFile('collections.json', collections);
-}
-
 export async function GET(req: NextRequest) {
-  const userId = getAuthUser(req);
+  const userId = await getAuthUser(req);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const collections = getCollections().filter(c => c.userId === userId);
+  const collections = await prisma.collection.findMany({
+    where: { userId },
+    orderBy: { updatedAt: 'desc' },
+  }) as unknown as Collection[];
+
   return NextResponse.json(collections);
 }
 
 export async function POST(req: NextRequest) {
-  const userId = getAuthUser(req);
+  const userId = await getAuthUser(req);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const body = await req.json();
-  const collection: Collection = {
-    id: generateId(),
-    userId,
-    name: body.name || 'Untitled Collection',
-    description: body.description || '',
-    requests: body.requests || [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  const collections = getCollections();
-  collections.push(collection);
-  saveCollections(collections);
+  const collection = await prisma.collection.create({
+    data: {
+      userId,
+      name: body.name || 'Untitled Collection',
+      description: body.description || '',
+      requests: body.requests || [],
+    },
+  }) as unknown as Collection;
 
   return NextResponse.json(collection, { status: 201 });
 }

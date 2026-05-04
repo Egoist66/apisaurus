@@ -1,25 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readJsonFile, writeJsonFile } from '@/lib/storage';
+import { prisma } from '@/lib/prisma';
 import { getAuthUser } from '@/lib/auth-middleware';
 import { Collection } from '@/types';
 
-function getCollections(): Collection[] {
-  return readJsonFile<Collection[]>('collections.json', []);
-}
-
-function saveCollections(collections: Collection[]): void {
-  writeJsonFile('collections.json', collections);
-}
-
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const userId = getAuthUser(req);
+  const userId = await getAuthUser(req);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { id } = await params;
-  const collections = getCollections();
-  const collection = collections.find(c => c.id === id && c.userId === userId);
+  const collection = await prisma.collection.findFirst({
+    where: { id, userId },
+  }) as unknown as Collection | null;
   
   if (!collection) {
     return NextResponse.json({ error: 'Collection not found' }, { status: 404 });
@@ -29,45 +22,51 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const userId = getAuthUser(req);
+  const userId = await getAuthUser(req);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { id } = await params;
-  const collections = getCollections();
-  const index = collections.findIndex(c => c.id === id && c.userId === userId);
+  const existingCollection = await prisma.collection.findFirst({
+    where: { id, userId },
+  });
   
-  if (index === -1) {
+  if (!existingCollection) {
     return NextResponse.json({ error: 'Collection not found' }, { status: 404 });
   }
 
   const body = await req.json();
-  collections[index] = {
-    ...collections[index],
-    ...body,
-    updatedAt: new Date().toISOString(),
-  };
+  const updatedCollection = await prisma.collection.update({
+    where: { id },
+    data: {
+      name: body.name ?? existingCollection.name,
+      description: body.description ?? existingCollection.description,
+      requests: body.requests ?? existingCollection.requests,
+    },
+  }) as unknown as Collection;
 
-  saveCollections(collections);
-  return NextResponse.json(collections[index]);
+  return NextResponse.json(updatedCollection);
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const userId = getAuthUser(req);
+  const userId = await getAuthUser(req);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { id } = await params;
-  const collections = getCollections();
-  const index = collections.findIndex(c => c.id === id && c.userId === userId);
+  const existingCollection = await prisma.collection.findFirst({
+    where: { id, userId },
+  });
   
-  if (index === -1) {
+  if (!existingCollection) {
     return NextResponse.json({ error: 'Collection not found' }, { status: 404 });
   }
 
-  collections.splice(index, 1);
-  saveCollections(collections);
+  await prisma.collection.delete({
+    where: { id },
+  });
+
   return NextResponse.json({ success: true });
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createUser, createToken } from '@/lib/auth';
+import { Prisma } from '@/generated/prisma/client';
+import { createUser, serializeAuthUser } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,19 +17,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
     }
 
-    const user = createUser(email, name, password);
-    const token = createToken(user.id);
-    const { password: _, ...userWithoutPassword } = user;
+    const user = await createUser(email, name, password);
 
     return NextResponse.json({
-      user: userWithoutPassword,
-      token,
-    });
-  } catch (error: any) {
+      user: serializeAuthUser(user),
+    }, { status: 201 });
+  } catch (error) {
     console.error('Registration failed:', error);
-    if (error.message.includes('already exists')) {
-      return NextResponse.json({ error: error.message }, { status: 409 });
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
     }
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login, register, savedAccount, resumeSavedSession, user } = useAuth();
+  const { login, register, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
 
@@ -23,12 +23,6 @@ export default function LoginPage() {
       router.push('/dashboard');
     }
   }, [user, router]);
-
-  useEffect(() => {
-    if (savedAccount && !email) {
-      setEmail(savedAccount.email);
-    }
-  }, [savedAccount, email]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,18 +52,6 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleQuickResume = () => {
-    setError('');
-    const result = resumeSavedSession();
-
-    if (result.success) {
-      router.push('/dashboard');
-      return;
-    }
-
-    setError(result.error || 'Не удалось восстановить сохраненную сессию');
   };
 
   return (
@@ -114,26 +96,6 @@ export default function LoginPage() {
         <div className={`backdrop-blur-sm border rounded-2xl p-8 shadow-xl ${
           theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200'
         }`}>
-          {savedAccount && isLogin && (
-            <div className={`mb-5 rounded-xl border p-4 ${
-              theme === 'dark' ? 'border-slate-700 bg-slate-900/40' : 'border-slate-200 bg-slate-50'
-            }`}>
-              <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                Быстрый вход для {savedAccount.name}
-              </p>
-              <p className={`mt-1 text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                Можно продолжить в один клик или войти под другим аккаунтом вручную.
-              </p>
-              <button
-                type="button"
-                onClick={handleQuickResume}
-                className="mt-3 w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-              >
-                Продолжить как {savedAccount.name}
-              </button>
-            </div>
-          )}
-
           <div className={`flex mb-6 rounded-lg p-1 ${theme === 'dark' ? 'bg-slate-700/50' : 'bg-slate-100'}`}>
             <button
               type="button"
@@ -180,7 +142,7 @@ export default function LoginPage() {
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                     theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-400' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                   }`}
-                  placeholder={savedAccount?.email || 'example@mail.com'}
+                  placeholder="example@mail.com"
                   required
                 />
             </div>

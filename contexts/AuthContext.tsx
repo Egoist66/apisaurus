@@ -1,164 +1,111 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, AuthSession } from '@/types';
-import { getSavedAccount, saveAccountForQuickLogin, tryRestoreSavedLogin } from '@/lib/client-auth-cache';
+import React, { createContext, useContext } from 'react';
+import { SessionProvider, signIn, signOut, useSession } from 'next-auth/react';
+import { User } from '@/types';
 
 interface AuthActionResult {
   success: boolean;
   error?: string;
-  source?: 'api' | 'local' | 'saved-session';
-}
-
-interface SavedAccountInfo {
-  email: string;
-  name: string;
 }
 
 interface AuthContextType {
   user: Omit<User, 'password'> | null;
-  token: string | null;
   login: (email: string, password: string) => Promise<AuthActionResult>;
   register: (email: string, name: string, password: string) => Promise<AuthActionResult>;
-  savedAccount: SavedAccountInfo | null;
-  resumeSavedSession: () => AuthActionResult;
   logout: () => void;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<Omit<User, 'password'> | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [savedAccount, setSavedAccount] = useState<SavedAccountInfo | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+function AuthContextInner({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
 
-  const applySession = (session: AuthSession) => {
-    setUser(session.user);
-    setToken(session.token);
-    localStorage.setItem('apisaurus_session', JSON.stringify(session));
-  };
-
-  const syncSavedAccount = () => {
-    const account = getSavedAccount();
-    setSavedAccount(account ? { email: account.email, name: account.name } : null);
-  };
-
-  useEffect(() => {
-    const savedSession = localStorage.getItem('apisaurus_session');
-    if (savedSession) {
-      try {
-        const session: AuthSession = JSON.parse(savedSession);
-        applySession(session);
-      } catch {
-        localStorage.removeItem('apisaurus_session');
+  const user = session?.user
+    ? {
+        id: session.user.id,
+        email: session.user.email || '',
+        name: session.user.name || '',
+        createdAt: session.user.createdAt,
       }
-    }
-    syncSavedAccount();
-    setIsLoading(false);
-  }, []);
+    : null;
 
   const login = async (email: string, password: string): Promise<AuthActionResult> => {
-    const normalizedEmail = email.trim().toLowerCase();
+    const result = await signIn('credentials', {
+      email: email.trim().toLowerCase(),
+      password,
+      redirect: false,
+    });
 
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: normalizedEmail, password }),
-      });
-
-      if (res.ok) {
-        const session: AuthSession = await res.json();
-        applySession(session);
-        saveAccountForQuickLogin(session, normalizedEmail, password);
-        syncSavedAccount();
-        return { success: true, source: 'api' };
-      }
-
-      const payload = await res.json().catch(() => null);
-      const fallbackSession = tryRestoreSavedLogin(normalizedEmail, password);
-
-      if (fallbackSession) {
-        applySession(fallbackSession);
-        syncSavedAccount();
-        return { success: true, source: 'local' };
-      }
-
-      return {
-        success: false,
-        error: payload?.error || 'Неверный email или пароль',
-      };
-    } catch {
-      const fallbackSession = tryRestoreSavedLogin(normalizedEmail, password);
-
-      if (fallbackSession) {
-        applySession(fallbackSession);
-        syncSavedAccount();
-        return { success: true, source: 'local' };
-      }
-
-      return {
-        success: false,
-        error: 'Не удалось выполнить вход. Проверь соединение и попробуй снова.',
-      };
+    if (result?.ok) {
+      return { success: true };
     }
+
+    return {
+      success: false,
+      error: 'Неверный email или пароль',
+    };
   };
 
   const register = async (email: string, name: string, password: string): Promise<AuthActionResult> => {
-    const normalizedEmail = email.trim().toLowerCase();
-    const normalizedName = name.trim();
-
     try {
-      const res = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: normalizedEmail, name: normalizedName, password }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          name: name.trim(),
+          password,
+        }),
       });
 
-      if (res.ok) {
-        const session: AuthSession = await res.json();
-        applySession(session);
-        saveAccountForQuickLogin(session, normalizedEmail, password);
-        syncSavedAccount();
-        return { success: true, source: 'api' };
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        return {
+          success: false,
+          error: payload?.error || 'Не удалось создать аккаунт',
+        };
       }
 
-      const payload = await res.json().catch(() => null);
-      return {
-        success: false,
-        error: payload?.error || 'Не удалось зарегистрироваться',
-      };
+      return login(email, password);
     } catch {
       return {
         success: false,
-        error: 'Не удалось зарегистрироваться. Проверь соединение и попробуй снова.',
+        error: 'Не удалось создать аккаунт. Проверь соединение и попробуй снова.',
       };
     }
   };
 
-  const resumeSavedSession = (): AuthActionResult => {
-    const account = getSavedAccount();
-    if (!account) {
-      return { success: false, error: 'Сохраненный аккаунт не найден' };
-    }
-
-    applySession(account.session);
-    syncSavedAccount();
-    return { success: true, source: 'saved-session' };
-  };
-
   const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('apisaurus_session');
+    void signOut({
+      redirect: false,
+      callbackUrl: '/',
+    });
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, savedAccount, resumeSavedSession, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        isLoading: status === 'loading',
+      }}
+    >
       {children}
     </AuthContext.Provider>
+  );
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider refetchOnWindowFocus={false}>
+      <AuthContextInner>{children}</AuthContextInner>
+    </SessionProvider>
   );
 }
 

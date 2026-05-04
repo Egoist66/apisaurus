@@ -254,15 +254,11 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
     const processedUrl = replaceVariables(url);
 
     try {
-      const session = localStorage.getItem('apisaurus_session');
-      const token = session ? JSON.parse(session).token : null;
-
       const startTime = performance.now();
       const res = await fetch('/api/test', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ method, url: processedUrl, headers, params, body, bodyType }),
       });

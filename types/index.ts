@@ -194,11 +194,6 @@ export interface TestResult {
   error?: string;
 }
 
-export interface AuthSession {
-  user: Omit<User, 'password'>;
-  token: string;
-}
-
 export interface HistoryEntry {
   id: string;
   method: string;

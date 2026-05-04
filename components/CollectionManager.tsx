@@ -93,16 +93,12 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
     setTestResult(null);
 
     try {
-      const token = localStorage.getItem('apisaurus_session');
-      const session = token ? JSON.parse(token) : null;
-
       const processedUrl = replaceVariables(editingRequest.url);
 
       const res = await fetch('/api/test', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${session?.token}`,
         },
         body: JSON.stringify({
           method: editingRequest.method,
