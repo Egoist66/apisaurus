@@ -22,7 +22,7 @@ export default function CodeExamples({ method, url, headers, params, body, bodyT
   if (!url) {
     return (
       <div className="p-8 text-center text-[var(--text-muted)]">
-        <p>Enter a URL to generate code examples</p>
+        <p>Введите URL, чтобы сгенерировать примеры кода</p>
       </div>
     );
   }
@@ -30,7 +30,7 @@ export default function CodeExamples({ method, url, headers, params, body, bodyT
   return (
     <div className="h-full flex flex-col bg-[var(--bg-secondary)]">
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
-        <h3 className="font-semibold text-[var(--text-primary)]">Code Examples</h3>
+        <h3 className="font-semibold text-[var(--text-primary)]">Примеры кода</h3>
       </div>
 
       <div className="flex gap-1 p-2 border-b border-[var(--border)]">
@@ -55,7 +55,7 @@ export default function CodeExamples({ method, url, headers, params, body, bodyT
           <button
             onClick={() => navigator.clipboard.writeText(examples[activeLang])}
             className="absolute top-2 right-2 p-2 bg-[var(--bg-tertiary)] hover:bg-[var(--bg-hover)] rounded-md transition-colors"
-            title="Copy to clipboard"
+            title="Скопировать в буфер обмена"
           >
             <svg className="w-4 h-4 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />

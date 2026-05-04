@@ -91,7 +91,7 @@ export default function VisualConstructor({ spec, onChange }: VisualConstructorP
     const generatedSpec: OpenAPISpec = {
       openapi: '3.0.0',
       info: {
-        title: spec.info.title || 'API Documentation',
+        title: spec.info.title || 'Документация API',
         version: spec.info.version || '1.0.0',
         description: text.substring(0, 500)
       },
@@ -103,7 +103,7 @@ export default function VisualConstructor({ spec, onChange }: VisualConstructorP
             summary: endpointName,
             description: text,
             parameters: [],
-            responses: { '200': { description: 'Success' } }
+            responses: { '200': { description: 'Успешный ответ' } }
           }
         }
       }
@@ -328,7 +328,7 @@ export default function VisualConstructor({ spec, onChange }: VisualConstructorP
                   type="text"
                   value={newServerDesc}
                   onChange={(e) => setNewServerDesc(e.target.value)}
-                  placeholder="Production server"
+                  placeholder="Основной сервер"
                   className="w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>

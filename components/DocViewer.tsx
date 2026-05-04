@@ -26,6 +26,8 @@ export default function DocViewer({ spec }: DocViewerProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [activeCodeExample, setActiveCodeExample] = useState<{ path: string; method: string; operation: Operation } | null>(null);
 
+  const hasCustomView = expandedPaths.size > 0 || expandedSchemas.size > 0 || activeCodeExample !== null;
+
   // Handle / key for search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -72,6 +74,13 @@ export default function DocViewer({ spec }: DocViewerProps) {
     }, 100);
   };
 
+  const resetView = () => {
+    setExpandedPaths(new Set());
+    setExpandedSchemas(new Set());
+    setActiveCodeExample(null);
+    setShowSearch(false);
+  };
+
   const totalEndpoints = Object.values(spec.paths || {}).reduce((count, pathItem) => {
     const methods = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head', 'trace'];
     return count + methods.filter(m => pathItem[m as keyof typeof pathItem]).length;
@@ -90,25 +99,38 @@ export default function DocViewer({ spec }: DocViewerProps) {
               <p className="text-[var(--text-secondary)] mb-4 whitespace-pre-wrap">{spec.info.description}</p>
             )}
           </div>
-          <button
-            onClick={() => setShowSearch(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <span className="text-sm">Поиск эндпоинтов</span>
-            <kbd className="px-2 py-0.5 bg-[var(--bg-primary)] rounded text-xs font-mono ml-2">/</kbd>
-          </button>
+          <div className="flex items-center gap-2">
+            {hasCustomView && (
+              <button
+                onClick={resetView}
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m14.836 2A8.001 8.001 0 005.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-14.837-2M18.418 15H15" />
+                </svg>
+                <span className="text-sm">Вернуть вид по умолчанию</span>
+              </button>
+            )}
+            <button
+              onClick={() => setShowSearch(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <span className="text-sm">Поиск эндпоинтов</span>
+              <kbd className="px-2 py-0.5 bg-[var(--bg-primary)] rounded text-xs font-mono ml-2">/</kbd>
+            </button>
+          </div>
         </div>
         <div className="flex items-center gap-4 text-sm">
           <span className="px-2 py-1 bg-blue-600/20 text-blue-400 rounded font-mono">
             v{spec.info.version}
           </span>
-          <span className="text-[var(--text-muted)]">{totalEndpoints} endpoints</span>
+          <span className="text-[var(--text-muted)]">{totalEndpoints} эндпоинтов</span>
           {spec.info.contact && (
             <span className="text-[var(--text-secondary)]">
-              Contact: {spec.info.contact.name || spec.info.contact.email}
+              Контакт: {spec.info.contact.name || spec.info.contact.email}
             </span>
           )}
         </div>
@@ -179,7 +201,7 @@ export default function DocViewer({ spec }: DocViewerProps) {
 
                       {operation.operationId && (
                         <div className="flex items-center gap-2 text-sm">
-                          <span className="text-[var(--text-muted)]">Operation ID:</span>
+                          <span className="text-[var(--text-muted)]">Идентификатор операции:</span>
                           <code className="text-blue-400">{operation.operationId}</code>
                         </div>
                       )}

@@ -27,6 +27,7 @@ export default function DashboardPage() {
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectDesc, setNewProjectDesc] = useState('');
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -84,9 +85,14 @@ export default function DashboardPage() {
     }
   };
 
-  const handleCreateProject = () => {
+  const handleCreateProject = async () => {
     if (newProjectName.trim()) {
-      createProject(newProjectName.trim(), newProjectDesc.trim());
+      setIsCreatingProject(true);
+      try {
+        await createProject(newProjectName.trim(), newProjectDesc.trim());
+      } finally {
+        setIsCreatingProject(false);
+      }
     }
   };
 
@@ -214,7 +220,7 @@ export default function DashboardPage() {
             <div className="max-w-6xl mx-auto">
               <div className="mb-8">
                 <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Ваши проекты</h1>
-                <p className="text-[var(--text-secondary)]">Создавайте и управляйте проектами документации API</p>
+                <p className="text-[var(--text-secondary)]">Создавайте и управляйте проектами для документации API</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -268,7 +274,7 @@ export default function DashboardPage() {
                     </svg>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Пока нет проектов</h3>
-                  <p className="text-[var(--text-muted)]">Создайте свой первый API проект, чтобы начать</p>
+                  <p className="text-[var(--text-muted)]">Создайте свой первый API-проект, чтобы начать работу</p>
                 </div>
               )}
             </div>
@@ -304,15 +310,27 @@ export default function DashboardPage() {
                 <div className="flex gap-3 justify-end">
                   <button
                     onClick={() => { setShowNewProjectModal(false); setNewProjectName(''); setNewProjectDesc(''); }}
+                    disabled={isCreatingProject}
                     className="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                   >
                     Отмена
                   </button>
                   <button
                     onClick={handleCreateProject}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    disabled={isCreatingProject || !newProjectName.trim()}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white rounded-lg transition-colors inline-flex items-center gap-2"
                   >
-                    Создать
+                    {isCreatingProject ? (
+                      <>
+                        <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Создание...
+                      </>
+                    ) : (
+                      'Создать'
+                    )}
                   </button>
                 </div>
               </div>

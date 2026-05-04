@@ -36,25 +36,37 @@ export default function Sidebar({
   const [newProjectDesc, setNewProjectDesc] = useState('');
   const [newCollectionName, setNewCollectionName] = useState('');
   const [newCollectionDesc, setNewCollectionDesc] = useState('');
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
+  const [isCreatingCollection, setIsCreatingCollection] = useState(false);
 
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
-  const handleCreateProject = () => {
+  const handleCreateProject = async () => {
     if (newProjectName.trim()) {
-      onCreateProject(newProjectName.trim(), newProjectDesc.trim());
-      setNewProjectName('');
-      setNewProjectDesc('');
-      setShowNewProject(false);
+      setIsCreatingProject(true);
+      try {
+        await Promise.resolve(onCreateProject(newProjectName.trim(), newProjectDesc.trim()));
+        setNewProjectName('');
+        setNewProjectDesc('');
+        setShowNewProject(false);
+      } finally {
+        setIsCreatingProject(false);
+      }
     }
   };
 
-  const handleCreateCollection = () => {
+  const handleCreateCollection = async () => {
     if (newCollectionName.trim()) {
-      onCreateCollection(newCollectionName.trim(), newCollectionDesc.trim());
-      setNewCollectionName('');
-      setNewCollectionDesc('');
-      setShowNewCollection(false);
+      setIsCreatingCollection(true);
+      try {
+        await Promise.resolve(onCreateCollection(newCollectionName.trim(), newCollectionDesc.trim()));
+        setNewCollectionName('');
+        setNewCollectionDesc('');
+        setShowNewCollection(false);
+      } finally {
+        setIsCreatingCollection(false);
+      }
     }
   };
 
@@ -277,15 +289,27 @@ export default function Sidebar({
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setShowNewProject(false)}
+                  disabled={isCreatingProject}
                   className="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                 >
                   Отмена
                 </button>
                 <button
                   onClick={handleCreateProject}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  disabled={isCreatingProject || !newProjectName.trim()}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white rounded-lg transition-colors inline-flex items-center gap-2"
                 >
-                  Создать
+                  {isCreatingProject ? (
+                    <>
+                      <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Создание...
+                    </>
+                  ) : (
+                    'Создать'
+                  )}
                 </button>
               </div>
             </div>
@@ -323,15 +347,27 @@ export default function Sidebar({
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setShowNewCollection(false)}
+                  disabled={isCreatingCollection}
                   className="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                 >
                   Отмена
                 </button>
                 <button
                   onClick={handleCreateCollection}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  disabled={isCreatingCollection || !newCollectionName.trim()}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white rounded-lg transition-colors inline-flex items-center gap-2"
                 >
-                  Создать
+                  {isCreatingCollection ? (
+                    <>
+                      <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Создание...
+                    </>
+                  ) : (
+                    'Создать'
+                  )}
                 </button>
               </div>
             </div>

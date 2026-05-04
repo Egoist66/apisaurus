@@ -22,6 +22,12 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
     crud: 'bg-green-500/20 text-green-400 border-green-500/30',
   };
 
+  const typeLabels: Record<string, string> = {
+    rest: 'REST',
+    graphql: 'GraphQL',
+    crud: 'CRUD',
+  };
+
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
       <div
@@ -31,7 +37,7 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
           <div>
              <h2 className="text-xl font-semibold text-[var(--text-primary)]">Шаблоны API</h2>
-             <p className="text-sm text-[var(--text-muted)] mt-1">Начните с готовой спецификации API</p>
+             <p className="text-sm text-[var(--text-muted)] mt-1">Начните работу с готового шаблона API</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg transition-colors">
             <svg className="w-5 h-5 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -72,14 +78,14 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
                         {template.name}
                       </h3>
                       <span className={`px-2 py-0.5 text-xs rounded border ${typeColors[template.type]}`}>
-                        {template.type}
+                        {typeLabels[template.type]}
                       </span>
                     </div>
                     <p className="text-sm text-[var(--text-secondary)]">{template.description}</p>
                     <div className="mt-3 text-xs text-[var(--text-muted)]">
-                       {Object.keys(template.spec.paths).length} путь{Object.keys(template.spec.paths).length !== 1 ? 'ей' : ''}
+                       {Object.keys(template.spec.paths).length} {getPathsLabel(Object.keys(template.spec.paths).length)}
                        {' • '}
-                       {Object.keys(template.spec.components?.schemas || {}).length} схем{Object.keys(template.spec.components?.schemas || {}).length !== 1 ? 'ы' : ''}
+                       {Object.keys(template.spec.components?.schemas || {}).length} {getSchemasLabel(Object.keys(template.spec.components?.schemas || {}).length)}
                     </div>
                   </div>
                   <svg className="w-5 h-5 text-[var(--text-muted)] group-hover:text-blue-400 transition-colors mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,4 +99,24 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
       </div>
     </div>
   );
+}
+
+function getPathsLabel(count: number) {
+  const lastTwoDigits = count % 100;
+  const lastDigit = count % 10;
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'путей';
+  if (lastDigit === 1) return 'путь';
+  if (lastDigit >= 2 && lastDigit <= 4) return 'пути';
+  return 'путей';
+}
+
+function getSchemasLabel(count: number) {
+  const lastTwoDigits = count % 100;
+  const lastDigit = count % 10;
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'схем';
+  if (lastDigit === 1) return 'схема';
+  if (lastDigit >= 2 && lastDigit <= 4) return 'схемы';
+  return 'схем';
 }

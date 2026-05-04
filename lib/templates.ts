@@ -4,17 +4,17 @@ export const apiTemplates: ApiTemplate[] = [
   {
     id: 'rest-api',
     name: 'REST API',
-    description: 'Standard RESTful API with common CRUD endpoints',
+    description: 'Стандартный REST API с базовыми CRUD-операциями',
     type: 'rest',
     icon: '🌐',
     spec: {
       openapi: '3.0.0',
       info: {
-        title: 'My REST API',
+        title: 'Мой REST API',
         version: '1.0.0',
-        description: 'A standard RESTful API for managing resources',
+        description: 'Стандартный REST API для управления ресурсами',
       },
-      servers: [{ url: 'https://api.example.com/v1', description: 'Production server' }],
+      servers: [{ url: 'https://api.example.com/v1', description: 'Основной сервер' }],
       paths: {
         '/items': {
           get: {
@@ -97,7 +97,7 @@ export const apiTemplates: ApiTemplate[] = [
   {
     id: 'graphql-api',
     name: 'GraphQL API',
-    description: 'GraphQL endpoint schema with queries and mutations',
+    description: 'Схема GraphQL-эндпоинта с запросами и мутациями',
     type: 'graphql',
     icon: '◈',
     spec: {
@@ -105,9 +105,9 @@ export const apiTemplates: ApiTemplate[] = [
       info: {
         title: 'GraphQL API',
         version: '1.0.0',
-        description: 'A GraphQL API for flexible data queries',
+        description: 'GraphQL API для гибких запросов к данным',
       },
-      servers: [{ url: 'https://api.example.com/graphql', description: 'GraphQL endpoint' }],
+      servers: [{ url: 'https://api.example.com/graphql', description: 'GraphQL-эндпоинт' }],
       paths: {
         '/graphql': {
           post: {
@@ -179,7 +179,7 @@ export const apiTemplates: ApiTemplate[] = [
   {
     id: 'crud-api',
     name: 'CRUD API',
-    description: 'Complete CRUD operations for users and products',
+    description: 'Полный набор CRUD-операций для пользователей и товаров',
     type: 'crud',
     icon: '📦',
     spec: {
@@ -187,9 +187,9 @@ export const apiTemplates: ApiTemplate[] = [
       info: {
         title: 'CRUD API',
         version: '1.0.0',
-        description: 'A complete CRUD API for users and products management',
+        description: 'Полноценный CRUD API для управления пользователями и товарами',
       },
-      servers: [{ url: 'https://api.example.com/v1', description: 'Production' }],
+      servers: [{ url: 'https://api.example.com/v1', description: 'Основной сервер' }],
       paths: {
         '/users': {
           get: {

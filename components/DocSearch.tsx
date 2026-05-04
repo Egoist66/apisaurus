@@ -124,7 +124,7 @@ export default function DocSearch({ spec, onSelectEndpoint, onClose }: DocSearch
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Search endpoints by name, path, or tag..."
+            placeholder="Ищите эндпоинты по названию, пути или тегу..."
             className="flex-1 bg-transparent text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none"
           />
           <kbd className="px-2 py-1 bg-[var(--bg-tertiary)] rounded text-xs text-[var(--text-muted)] font-mono">ESC</kbd>
@@ -133,13 +133,13 @@ export default function DocSearch({ spec, onSelectEndpoint, onClose }: DocSearch
         <div className="max-h-96 overflow-auto">
           {query && results.length === 0 && (
             <div className="p-8 text-center text-[var(--text-muted)] text-sm">
-              No endpoints found for "{query}"
+              По запросу "{query}" ничего не найдено
             </div>
           )}
 
           {!query && (
             <div className="p-8 text-center text-[var(--text-muted)] text-sm">
-              Start typing to search endpoints
+              Начните вводить текст для поиска эндпоинтов
             </div>
           )}
 
@@ -177,14 +177,14 @@ export default function DocSearch({ spec, onSelectEndpoint, onClose }: DocSearch
             <span className="flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 bg-[var(--bg-tertiary)] rounded font-mono">↑</kbd>
               <kbd className="px-1.5 py-0.5 bg-[var(--bg-tertiary)] rounded font-mono">↓</kbd>
-              to navigate
+              перемещение
             </span>
             <span className="flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 bg-[var(--bg-tertiary)] rounded font-mono">↵</kbd>
-              to select
+              выбор
             </span>
           </div>
-          <span>{results.length} result{results.length !== 1 ? 's' : ''}</span>
+          <span>{results.length} результат{results.length === 1 ? '' : results.length < 5 ? 'а' : 'ов'}</span>
         </div>
       </div>
     </div>

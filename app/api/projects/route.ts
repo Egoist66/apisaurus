@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuthUser } from '@/lib/auth-middleware';
+import { getDefaultSpec } from '@/lib/default-spec';
 import { Project } from '@/types';
 
 export async function GET(req: NextRequest) {
@@ -34,20 +35,4 @@ export async function POST(req: NextRequest) {
   }) as unknown as Project;
 
   return NextResponse.json(project, { status: 201 });
-}
-
-function getDefaultSpec() {
-  return {
-    openapi: '3.0.0',
-    info: {
-      title: 'My API',
-      version: '1.0.0',
-      description: 'API documentation',
-    },
-    servers: [{ url: 'http://localhost:3000', description: 'Local server' }],
-    paths: {},
-    components: {
-      schemas: {},
-    },
-  };
 }

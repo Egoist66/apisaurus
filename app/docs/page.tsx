@@ -88,12 +88,12 @@ export default function DocsPage() {
 
             {activeSection === 'testing' && (
               <section>
-                <h1 className="text-4xl font-bold mb-8">Как пользоваться API Тестером</h1>
+                <h1 className="text-4xl font-bold mb-8">Как пользоваться API-тестером</h1>
 
                 <div className={`p-6 rounded-xl mb-6 ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'} shadow-lg`}>
-                  <h2 className="text-2xl font-bold mb-4">API Тестер</h2>
+                  <h2 className="text-2xl font-bold mb-4">API-тестер</h2>
                   <p className={`mb-4 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                    API Тестер — это встроенный HTTP клиент для тестирования API эндпоинтов. Он позволяет отправлять запросы
+                    API-тестер — это встроенный HTTP-клиент для тестирования API-эндпоинтов. Он позволяет отправлять запросы
                     и просматривать ответы прямо в браузере.
                   </p>
 
@@ -239,7 +239,7 @@ export default function DocsPage() {
                   <ol className="space-y-3">
                     {[
                       'Создайте или откройте проект с OpenAPI спецификацией',
-                      'Убедитесь, что спецификация заполнена корректно (endpoints, параметры, ответы)',
+                      'Убедитесь, что спецификация заполнена корректно: эндпоинты, параметры и ответы описаны верно',
                       'Перейдите в режим просмотра документации',
                       'Документация будет сгенерирована автоматически на основе спецификации',
                     ].map((item, idx) => (
@@ -257,7 +257,7 @@ export default function DocsPage() {
                   <h2 className="text-2xl font-bold mb-4">Что включает в себя документация</h2>
                   <ul className="space-y-2">
                     {[
-                      'Список всех эндпоинтов API с описанием',
+                      'Список всех API-эндпоинтов с описанием',
                       'Параметры запроса (path, query, header)',
                       'Схемы тела запроса и ответа',
                       'Примеры ответов для разных статус-кодов',
@@ -273,7 +273,7 @@ export default function DocsPage() {
                 <div className={`p-6 rounded-xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'} shadow-lg`}>
                   <h2 className="text-2xl font-bold mb-4">Редактирование документации</h2>
                   <p className={`mb-4 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                    Чтобы изменить документацию, просто отредактируйте вашу OpenAPI спецификацию:
+                    Чтобы изменить документацию, просто отредактируйте вашу OpenAPI-спецификацию:
                   </p>
                   <ul className="space-y-2">
                     {[

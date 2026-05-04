@@ -287,7 +287,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
     } catch (error: any) {
       const errorResult = {
         status: 0,
-        statusText: 'Error',
+        statusText: 'Ошибка',
         headers: {},
         body: '',
         duration: 0,
@@ -386,10 +386,10 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
     : responseViewMode;
 
   const responseViewOptions: Array<{ value: ResponseViewMode; label: string }> = [
-    { value: 'auto', label: `Auto${result ? ` (${detectedResponseType.toUpperCase()})` : ''}` },
+    { value: 'auto', label: `Авто${result ? ` (${detectedResponseType.toUpperCase()})` : ''}` },
     { value: 'json', label: 'JSON' },
     { value: 'html', label: 'HTML' },
-    { value: 'text', label: 'Text' },
+    { value: 'text', label: 'Текст' },
   ];
 
   const renderResponseBody = () => {
@@ -402,7 +402,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
             <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-red-400 font-medium">Request Failed</span>
+            <span className="text-red-400 font-medium">Не удалось выполнить запрос</span>
           </div>
           <p className="text-red-400 text-sm font-mono">{result.error}</p>
         </div>
@@ -437,7 +437,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
       );
     }
 
-    return <div className="text-sm text-[var(--text-muted)]">No cookies in response</div>;
+    return <div className="text-sm text-[var(--text-muted)]">В ответе нет cookie</div>;
   };
 
   return (
@@ -456,12 +456,12 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                 <ArrowLeft className="h-4 w-4" />
               </button>
               <div className="min-w-0">
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">API Tester</h2>
-                <p className="text-sm text-[var(--text-secondary)]">Отправляй запросы и смотри ответ без сдвигов и скрытых панелей.</p>
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">API-тестер</h2>
+                <p className="text-sm text-[var(--text-secondary)]">Отправляйте запросы на различные эндпоинты.</p>
               </div>
             </div>
             <span className="hidden rounded-full border border-[var(--border)] bg-[var(--bg-primary)]/60 px-3 py-1 text-xs text-[var(--text-muted)] sm:inline">
-              Ctrl+Enter to send
+              Ctrl+Enter для отправки
             </span>
           </div>
         </div>
@@ -489,7 +489,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                   type="text"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="Enter URL or {{baseUrl}}/path"
+                  placeholder="Введите URL или {{baseUrl}}/path"
                   className="w-full min-w-0 px-4 py-2.5 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 />
@@ -506,14 +506,14 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    Sending...
+                    Отправка...
                   </>
                 ) : (
                   <>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    Send
+                    Отправить
                   </>
                 )}
               </button>
@@ -521,17 +521,17 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
 
             <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
               <span className="rounded-full border border-[var(--border)] bg-[var(--bg-primary)]/50 px-2.5 py-1 text-[var(--text-secondary)]">
-                {activeHeaderCount} headers
+                {activeHeaderCount} заголовков
               </span>
               <span className="rounded-full border border-[var(--border)] bg-[var(--bg-primary)]/50 px-2.5 py-1 text-[var(--text-secondary)]">
-                {activeParamCount} params
+                {activeParamCount} параметров
               </span>
               <span className="rounded-full border border-[var(--border)] bg-[var(--bg-primary)]/50 px-2.5 py-1 text-[var(--text-secondary)]">
-                Body: {hasBodyContent ? bodyType : 'none'}
+                Тело: {hasBodyContent ? bodyType : 'нет'}
               </span>
               {result && (
                 <span className={`rounded-full border px-2.5 py-1 font-medium ${statusColor(result.status)}`}>
-                  Last response: {result.status} {result.statusText}
+                  Последний ответ: {result.status} {result.statusText}
                 </span>
               )}
             </div>
@@ -544,7 +544,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
           <div className="min-w-0 min-h-0 flex flex-col border-b xl:border-b-0 xl:border-r border-[var(--border)] bg-[var(--bg-primary)]">
             <div className="flex-none border-b border-[var(--border)] bg-[var(--bg-secondary)]/50 px-3 py-3">
               <div className="mb-3">
-                <p className="text-sm font-semibold text-[var(--text-primary)]">Request setup</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Настройка запроса</p>
                 <p className="text-xs text-[var(--text-muted)]">Настрой параметры, заголовки и тело запроса перед отправкой.</p>
               </div>
               <div className="flex flex-wrap gap-1">
@@ -554,7 +554,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                     onClick={() => setActiveTab(tab)}
                     className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors capitalize ${activeTab === tab ? 'bg-blue-600/20 text-blue-400 ring-1 ring-blue-500/30' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'}`}
                   >
-                    {tab}
+                    {tab === 'headers' ? 'Заголовки' : tab === 'params' ? 'Параметры' : 'Тело'}
                     {tab === 'headers' && activeHeaderCount > 0 && (
                       <span className="ml-1 text-xs">({activeHeaderCount})</span>
                     )}
@@ -585,14 +585,14 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                         type="text"
                         value={header.key}
                         onChange={(e) => updateHeader(index, 'key', e.target.value)}
-                        placeholder="Header name"
+                        placeholder="Имя заголовка"
                         className="min-w-0 flex-1 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                       />
                       <input
                         type="text"
                         value={header.value}
                         onChange={(e) => updateHeader(index, 'value', e.target.value)}
-                        placeholder="Value"
+                        placeholder="Значение"
                         className="min-w-0 flex-1 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                       />
                       <button onClick={() => removeHeader(index)} className="p-2 hover:bg-red-500/20 rounded-lg transition-colors shrink-0">
@@ -606,7 +606,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    Add Header
+                    Добавить заголовок
                   </button>
                 </div>
               )}
@@ -629,14 +629,14 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                         type="text"
                         value={param.key}
                         onChange={(e) => updateParam(index, 'key', e.target.value)}
-                        placeholder="Parameter name"
+                        placeholder="Имя параметра"
                         className="min-w-0 flex-1 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                       />
                       <input
                         type="text"
                         value={param.value}
                         onChange={(e) => updateParam(index, 'value', e.target.value)}
-                        placeholder="Value"
+                        placeholder="Значение"
                         className="min-w-0 flex-1 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                       />
                       <button onClick={() => removeParam(index)} className="p-2 hover:bg-red-500/20 rounded-lg transition-colors shrink-0">
@@ -650,7 +650,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    Add Parameter
+                    Добавить параметр
                   </button>
                 </div>
               )}
@@ -662,9 +662,9 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                     onChange={(e) => setBodyType(e.target.value)}
                     className="px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="none">None</option>
+                    <option value="none">Нет</option>
                     <option value="json">JSON</option>
-                    <option value="text">Text</option>
+                    <option value="text">Текст</option>
                     <option value="xml">XML</option>
                     <option value="x-www-form-urlencoded">x-www-form-urlencoded</option>
                   </select>
@@ -672,7 +672,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                     <textarea
                       value={body}
                       onChange={(e) => setBody(e.target.value)}
-                      placeholder={bodyType === 'json' ? '{\n  "key": "value"\n}' : 'Request body...'}
+                      placeholder={bodyType === 'json' ? '{\n  "key": "value"\n}' : 'Тело запроса...'}
                       className="w-full h-80 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     />
                   )}
@@ -686,7 +686,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
             <div className="flex-none border-b border-[var(--border)] bg-[var(--bg-secondary)]/50 px-3 py-3">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[var(--text-primary)]">Response</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">Ответ</p>
                   <p className="text-xs text-[var(--text-muted)]">
                     {result ? 'Тело ответа, заголовки и метрики отображаются здесь.' : 'После отправки запроса ответ появится в этой панели.'}
                   </p>
@@ -699,7 +699,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                       disabled={!result}
                       className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors capitalize ${resultTab === tab ? 'bg-blue-600/20 text-blue-400 ring-1 ring-blue-500/30' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'} ${!result ? 'opacity-50 cursor-not-allowed hover:bg-transparent hover:text-[var(--text-secondary)]' : ''}`}
                     >
-                      {tab}
+                      {tab === 'body' ? 'Тело' : tab === 'headers' ? 'Заголовки' : 'Cookie'}
                     </button>
                   ))}
                   {result && resultTab === 'body' && (
@@ -709,7 +709,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                           key={option.value}
                           onClick={() => setResponseViewMode(option.value)}
                           className={`rounded-lg px-2.5 py-1 text-[11px] font-medium transition-colors ${responseViewMode === option.value ? 'bg-blue-600/20 text-blue-400 ring-1 ring-blue-500/30' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]'}`}
-                          title={`View response as ${option.label}`}
+                          title={`Показать ответ как ${option.label}`}
                         >
                           {option.label}
                         </button>
@@ -728,7 +728,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                       <button
                         onClick={() => setResponseFullscreen(true)}
                         className="p-1.5 hover:bg-[var(--bg-tertiary)] rounded transition-colors"
-                        title="Fullscreen"
+                        title="На весь экран"
                       >
                         <Maximize2 className="w-4 h-4 text-[var(--text-secondary)]" />
                       </button>
@@ -751,7 +751,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
-                    <p className="text-lg font-medium text-[var(--text-primary)]">Send a request to preview the response</p>
+                    <p className="text-lg font-medium text-[var(--text-primary)]">Отправьте запрос, чтобы увидеть ответ</p>
                     <p className="mt-2 text-sm text-[var(--text-secondary)]">Интерфейс теперь держит панель ответа на месте, поэтому результат не уезжает за экран.</p>
                   </div>
                 </div>
@@ -780,7 +780,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                         key={option.value}
                         onClick={() => setResponseViewMode(option.value)}
                         className={`rounded-lg px-2.5 py-1 text-[11px] font-medium transition-colors ${responseViewMode === option.value ? 'bg-blue-600/20 text-blue-400 ring-1 ring-blue-500/30' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]'}`}
-                        title={`View response as ${option.label}`}
+                        title={`Показать ответ как ${option.label}`}
                       >
                         {option.label}
                       </button>
@@ -797,7 +797,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
                 <button
                   onClick={() => setResponseFullscreen(false)}
                   className="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg transition-colors"
-                  title="Exit fullscreen"
+                  title="Выйти из полноэкранного режима"
                 >
                   <Minimize2 className="w-5 h-5 text-[var(--text-secondary)]" />
                 </button>
@@ -815,7 +815,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
         <button
           onClick={() => setSidePanel(sidePanel === 'history' ? 'none' : 'history')}
           className={`p-2.5 rounded-lg transition-colors ${sidePanel === 'history' ? 'bg-blue-600/20 text-blue-400' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'}`}
-          title="Request History"
+          title="История запросов"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -824,7 +824,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
         <button
           onClick={() => setSidePanel(sidePanel === 'environment' ? 'none' : 'environment')}
           className={`p-2.5 rounded-lg transition-colors ${sidePanel === 'environment' ? 'bg-blue-600/20 text-blue-400' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'}`}
-          title="Environments"
+          title="Окружения"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -833,7 +833,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
         <button
           onClick={() => setSidePanel(sidePanel === 'code' ? 'none' : 'code')}
           className={`p-2.5 rounded-lg transition-colors ${sidePanel === 'code' ? 'bg-blue-600/20 text-blue-400' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'}`}
-          title="Code Examples"
+          title="Примеры кода"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
@@ -842,7 +842,7 @@ export default function ApiTester({ onBack }: ApiTesterProps) {
         <button
           onClick={() => setSidePanel(sidePanel === 'stats' ? 'none' : 'stats')}
           className={`p-2.5 rounded-lg transition-colors ${sidePanel === 'stats' ? 'bg-blue-600/20 text-blue-400' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'}`}
-          title="Statistics"
+          title="Статистика"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />

@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 import jsyaml from 'js-yaml';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { Project, OpenAPISpec, ApiTemplate } from '@/types';
+import { getDefaultSpec } from '@/lib/default-spec';
 import DocViewer from './DocViewer';
 import TemplateSelector from './TemplateSelector';
 import VisualConstructor from './VisualConstructor';
@@ -104,6 +105,15 @@ export default function ProjectEditor({ project, onSave, onBack }: ProjectEditor
     setShowTemplates(false);
   };
 
+  const handleResetToDefaultSpec = () => {
+    const defaultSpec = getDefaultSpec();
+    const content = specFormat === 'yaml'
+      ? jsyaml.dump(defaultSpec, { indent: 2, lineWidth: -1 })
+      : JSON.stringify(defaultSpec, null, 2);
+    setSpecContent(content);
+    setActiveTab('editor');
+  };
+
   const endpointCount = parsedSpec ? Object.keys(parsedSpec.paths || {}).reduce((count, path) => {
     const methods = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head'];
     const pathItem = parsedSpec.paths![path];
@@ -184,6 +194,14 @@ export default function ProjectEditor({ project, onSave, onBack }: ProjectEditor
             className="px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors"
           >
              Шаблоны
+          </button>
+          <button
+            onClick={handleResetToDefaultSpec}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--bg-tertiary)] text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
+            title="Вернуть дефолтную схему-заглушку"
+            aria-label="Вернуть дефолтную схему-заглушку"
+          >
+            <RotateCcw className="h-4 w-4" />
           </button>
            <button
              onClick={handleImport}
