@@ -5,6 +5,14 @@ import { User } from '@/types';
 const TOKEN_SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || 'apisaurus-dev-secret';
 const TOKEN_TTL_MS = 1000 * 60 * 60 * 24 * 30;
 
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+function normalizeName(name: string): string {
+  return name.trim();
+}
+
 export function hashPassword(password: string): string {
   let hash = 0;
   for (let i = 0; i < password.length; i++) {
@@ -32,19 +40,22 @@ export function saveUsers(users: User[]): void {
 }
 
 export function findUserByEmail(email: string): User | undefined {
-  return getUsers().find(u => u.email.toLowerCase() === email.toLowerCase());
+  const normalizedEmail = normalizeEmail(email);
+  return getUsers().find(u => normalizeEmail(u.email) === normalizedEmail);
 }
 
 export function createUser(email: string, name: string, password: string): User {
   const users = getUsers();
-  const existing = findUserByEmail(email);
+  const normalizedEmail = normalizeEmail(email);
+  const normalizedName = normalizeName(name);
+  const existing = findUserByEmail(normalizedEmail);
   if (existing) {
     throw new Error('User with this email already exists');
   }
   const user: User = {
     id: generateId(),
-    email,
-    name,
+    email: normalizedEmail,
+    name: normalizedName,
     password: hashPassword(password),
     createdAt: new Date().toISOString(),
   };

@@ -3,7 +3,10 @@ import { createUser, createToken } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, name, password } = await req.json();
+    const body = await req.json();
+    const email = typeof body.email === 'string' ? body.email.trim() : '';
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    const password = typeof body.password === 'string' ? body.password : '';
 
     if (!email || !name || !password) {
       return NextResponse.json({ error: 'Email, name and password are required' }, { status: 400 });
