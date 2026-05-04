@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
       token,
     });
   } catch (error: any) {
+    console.error('Registration failed:', error);
     if (error.message.includes('already exists')) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }

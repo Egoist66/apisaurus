@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readJsonFile, writeJsonFile } from '@/lib/storage';
+import { getAuthUser } from '@/lib/auth-middleware';
 import { Project } from '@/types';
 
 function getProjects(): Project[] {
@@ -8,14 +9,6 @@ function getProjects(): Project[] {
 
 function saveProjects(projects: Project[]): void {
   writeJsonFile('projects.json', projects);
-}
-
-function getAuthUser(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
-  const token = authHeader.split(' ')[1];
-  const tokens = readJsonFile<Record<string, string>>('tokens.json', {});
-  return tokens[token] || null;
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

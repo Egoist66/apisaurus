@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readJsonFile, writeJsonFile, generateId } from '@/lib/storage';
+import { getAuthUser } from '@/lib/auth-middleware';
 import { Collection } from '@/types';
 
 function getCollections(): Collection[] {
@@ -8,14 +9,6 @@ function getCollections(): Collection[] {
 
 function saveCollections(collections: Collection[]): void {
   writeJsonFile('collections.json', collections);
-}
-
-function getAuthUser(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
-  const token = authHeader.split(' ')[1];
-  const tokens = readJsonFile<Record<string, string>>('tokens.json', {});
-  return tokens[token] || null;
 }
 
 export async function GET(req: NextRequest) {
