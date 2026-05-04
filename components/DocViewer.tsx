@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { OpenAPISpec, Operation, Parameter, Schema, Header, Param } from '@/types';
 import DocSearch from './DocSearch';
 import CodeExamples from './CodeExamples';
@@ -25,6 +25,20 @@ export default function DocViewer({ spec }: DocViewerProps) {
   const [expandedSchemas, setExpandedSchemas] = useState<Set<string>>(new Set());
   const [showSearch, setShowSearch] = useState(false);
   const [activeCodeExample, setActiveCodeExample] = useState<{ path: string; method: string; operation: Operation } | null>(null);
+
+  // Handle / key for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const tag = (e.target as HTMLElement)?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        e.preventDefault();
+        setShowSearch(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const togglePath = (path: string, method: string) => {
     const key = `${path}-${method}`;
@@ -83,7 +97,7 @@ export default function DocViewer({ spec }: DocViewerProps) {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span className="text-sm">Search endpoints</span>
+            <span className="text-sm">Поиск эндпоинтов</span>
             <kbd className="px-2 py-0.5 bg-[var(--bg-primary)] rounded text-xs font-mono ml-2">/</kbd>
           </button>
         </div>
@@ -103,7 +117,7 @@ export default function DocViewer({ spec }: DocViewerProps) {
       {/* Servers */}
       {spec.servers && spec.servers.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Servers</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-3">Серверы</h2>
           <div className="space-y-2">
             {spec.servers.map((server, i) => (
               <div key={i} className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-lg">
@@ -126,7 +140,7 @@ export default function DocViewer({ spec }: DocViewerProps) {
             {tag !== 'untagged' && (
               <span className="px-2 py-0.5 bg-[var(--bg-tertiary)] rounded text-sm">{tag}</span>
             )}
-            {tag === 'untagged' && 'Other Endpoints'}
+             {tag === 'untagged' && 'Другие эндпоинты'}
           </h2>
           <div className="space-y-4">
             {endpoints.map(({ path, method, operation }) => {
@@ -173,15 +187,15 @@ export default function DocViewer({ spec }: DocViewerProps) {
                       {/* Path parameters */}
                       {(operation.parameters || []).length > 0 && (
                         <div>
-                          <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Parameters</h4>
+                           <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Параметры</h4>
                           <table className="w-full text-sm">
                             <thead>
                               <tr className="text-[var(--text-secondary)] border-b border-[var(--border)]">
-                                <th className="text-left py-2 font-medium">Name</th>
-                                <th className="text-left py-2 font-medium">In</th>
-                                <th className="text-left py-2 font-medium">Required</th>
-                                <th className="text-left py-2 font-medium">Type</th>
-                                <th className="text-left py-2 font-medium">Description</th>
+                                 <th className="text-left py-2 font-medium">Имя</th>
+                                 <th className="text-left py-2 font-medium">Где</th>
+                                 <th className="text-left py-2 font-medium">Обязательно</th>
+                                 <th className="text-left py-2 font-medium">Тип</th>
+                                 <th className="text-left py-2 font-medium">Описание</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -189,7 +203,7 @@ export default function DocViewer({ spec }: DocViewerProps) {
                                 <tr key={i} className="border-b border-[var(--border)]/50">
                                   <td className="py-2 font-mono text-blue-400">{param.name}</td>
                                   <td className="py-2 text-[var(--text-secondary)]">{param.in}</td>
-                                  <td className="py-2">{param.required ? <span className="text-red-400">Yes</span> : <span className="text-[var(--text-muted)]">No</span>}</td>
+                                   <td className="py-2">{param.required ? <span className="text-red-400">Да</span> : <span className="text-[var(--text-muted)]">Нет</span>}</td>
                                   <td className="py-2 font-mono text-green-400">{param.schema?.type || 'string'}</td>
                                   <td className="py-2 text-[var(--text-secondary)]">{param.description || '-'}</td>
                                 </tr>
@@ -202,9 +216,9 @@ export default function DocViewer({ spec }: DocViewerProps) {
                       {/* Request body */}
                       {operation.requestBody && (
                         <div>
-                          <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
-                            Request Body {operation.requestBody.required && <span className="text-red-400">*</span>}
-                          </h4>
+                           <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
+                             Тело запроса {operation.requestBody.required && <span className="text-red-400">*</span>}
+                           </h4>
                           {operation.requestBody.description && (
                             <p className="text-[var(--text-secondary)] text-sm mb-2">{operation.requestBody.description}</p>
                           )}
@@ -227,7 +241,7 @@ export default function DocViewer({ spec }: DocViewerProps) {
 
                       {/* Responses */}
                       <div>
-                        <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Responses</h4>
+                         <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Ответы</h4>
                         <div className="space-y-2">
                           {Object.entries(operation.responses).map(([status, response]) => {
                             const statusColor = status.startsWith('2') ? 'text-green-400' :
@@ -268,7 +282,7 @@ export default function DocViewer({ spec }: DocViewerProps) {
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                           </svg>
-                          {activeCodeExample?.path === path && activeCodeExample?.method === method ? 'Hide' : 'View'} Code Examples
+                           {activeCodeExample?.path === path && activeCodeExample?.method === method ? 'Скрыть' : 'Показать'} примеры кода
                         </button>
 
                         {activeCodeExample?.path === path && activeCodeExample?.method === method && (
@@ -296,7 +310,7 @@ export default function DocViewer({ spec }: DocViewerProps) {
       {/* Schemas */}
       {spec.components?.schemas && Object.keys(spec.components.schemas).length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Schemas</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Схемы</h2>
           <div className="space-y-4">
             {Object.entries(spec.components.schemas).map(([name, schema]) => (
               <div key={name} className="border border-[var(--border)] rounded-lg overflow-hidden">

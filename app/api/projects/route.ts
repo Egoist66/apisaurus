@@ -3,7 +3,7 @@ import { readJsonFile, writeJsonFile, generateId } from '@/lib/storage';
 import { Project } from '@/types';
 
 function getProjects(): Project[] {
-  return readJsonFile<Project[]>('projects.json') || [];
+  return readJsonFile<Project[]>('projects.json', []);
 }
 
 function saveProjects(projects: Project[]): void {
@@ -14,7 +14,7 @@ function getAuthUser(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
   const token = authHeader.split(' ')[1];
-  const tokens = readJsonFile<Record<string, string>>('tokens.json') || {};
+  const tokens = readJsonFile<Record<string, string>>('tokens.json', {});
   return tokens[token] || null;
 }
 

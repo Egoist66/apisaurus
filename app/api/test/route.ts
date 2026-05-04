@@ -14,19 +14,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Method and URL are required' }, { status: 400 });
     }
 
+    // Validate URL
+    let validatedUrl: string;
+    try {
+      validatedUrl = new URL(url).toString();
+    } catch {
+      return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
+    }
+
     const startTime = Date.now();
 
     // Build URL with query params
-    let requestUrl = url;
+    let requestUrl = validatedUrl;
     if (params && params.length > 0) {
-      const searchParams = new URLSearchParams();
+      const urlObj = new URL(requestUrl);
       params
         .filter((p: any) => p.enabled && p.key)
-        .forEach((p: any) => searchParams.append(p.key, p.value));
-      const queryString = searchParams.toString();
-      if (queryString) {
-        requestUrl += (url.includes('?') ? '&' : '?') + queryString;
-      }
+        .forEach((p: any) => urlObj.searchParams.append(p.key, p.value));
+      requestUrl = urlObj.toString();
     }
 
     // Build headers
@@ -47,7 +52,7 @@ export async function POST(req: NextRequest) {
         requestBody = typeof body === 'string' ? body : JSON.stringify(body);
       } else if (bodyType === 'form-data') {
         const formData = new FormData();
-        if (typeof body === 'object') {
+        if (typeof body === 'object' && body !== null) {
           Object.entries(body).forEach(([key, value]) => {
             formData.append(key, String(value));
           });
@@ -55,14 +60,21 @@ export async function POST(req: NextRequest) {
         requestBody = formData;
       } else if (bodyType === 'x-www-form-urlencoded') {
         requestHeaders['Content-Type'] = requestHeaders['Content-Type'] || 'application/x-www-form-urlencoded';
-        if (typeof body === 'object') {
-          requestBody = new URLSearchParams(body).toString();
+        if (typeof body === 'object' && body !== null) {
+          requestBody = new URLSearchParams(body as Record<string, string>).toString();
         } else {
           requestBody = body;
         }
+      } else if (bodyType === 'text' || bodyType === 'xml') {
+        requestBody = typeof body === 'string' ? body : String(body);
       } else {
         requestBody = typeof body === 'string' ? body : JSON.stringify(body);
       }
+    }
+
+    // Remove Content-Type if body is FormData (browser will set it with boundary)
+    if (requestBody instanceof FormData) {
+      delete requestHeaders['Content-Type'];
     }
 
     const response = await fetch(requestUrl, {
@@ -73,17 +85,25 @@ export async function POST(req: NextRequest) {
 
     const duration = Date.now() - startTime;
 
+    // Get response headers
     const responseHeaders: Record<string, string> = {};
     response.headers.forEach((value, key) => {
       responseHeaders[key] = value;
     });
 
-    let responseBody = '';
+    // Get response body
+    let responseBody: string;
     const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      responseBody = await response.text();
-    } else {
-      responseBody = await response.text();
+    
+    try {
+      if (contentType && contentType.includes('application/json')) {
+        const json = await response.json();
+        responseBody = JSON.stringify(json, null, 2);
+      } else {
+        responseBody = await response.text();
+      }
+    } catch (e) {
+      responseBody = '[Unable to read response body]';
     }
 
     return NextResponse.json({

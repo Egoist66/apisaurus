@@ -33,22 +33,22 @@ export default function LoginPage() {
       let success;
       if (isLogin) {
         success = await login(email, password);
-        if (!success) setError('Invalid email or password');
+        if (!success) setError('Неверный email или пароль');
       } else {
         if (password.length < 6) {
-          setError('Password must be at least 6 characters');
+          setError('Пароль должен содержать минимум 6 символов');
           setIsLoading(false);
           return;
         }
         success = await register(email, name, password);
-        if (!success) setError('Registration failed. Email may already be in use.');
+        if (!success) setError('Ошибка регистрации. Email может быть уже занят.');
       }
 
       if (success) {
         router.push('/dashboard');
       }
     } catch {
-      setError('An unexpected error occurred');
+      setError('Произошла непредвиденная ошибка');
     } finally {
       setIsLoading(false);
     }
@@ -78,17 +78,20 @@ export default function LoginPage() {
       </button>
 
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 shadow-lg ${
-            theme === 'dark' ? 'bg-blue-600 shadow-blue-600/30' : 'bg-blue-600 shadow-blue-600/30'
-          }`}>
-            <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+           <div className="text-center mb-8">
+           <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 shadow-lg ${
+             theme === 'dark' ? 'bg-blue-600 shadow-blue-600/30' : 'bg-blue-600 shadow-blue-600/30'
+           }`}>
+             <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+             </svg>
+           </div>
+           <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>API Saurus</h1>
+            <p className={`mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Платформа документации и тестирования API</p>
+            <a href="/docs" className={`mt-3 inline-block text-sm ${theme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}>
+              Узнать больше о возможностях →
+            </a>
           </div>
-          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>API Saurus</h1>
-          <p className={`mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>API Documentation & Testing Platform</p>
-        </div>
 
         <div className={`backdrop-blur-sm border rounded-2xl p-8 shadow-xl ${
           theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200'
@@ -100,24 +103,24 @@ export default function LoginPage() {
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
                 isLogin ? 'bg-blue-600 text-white shadow-md' : theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              onClick={() => { setIsLogin(false); setError(''); }}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                !isLogin ? 'bg-blue-600 text-white shadow-md' : theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Sign Up
-            </button>
+              >
+                Войти
+              </button>
+              <button
+                type="button"
+                onClick={() => { setIsLogin(false); setError(''); }}
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
+                  !isLogin ? 'bg-blue-600 text-white shadow-md' : theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Регистрация
+              </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Name</label>
+                <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Имя</label>
                 <input
                   type="text"
                   value={name}
@@ -125,37 +128,37 @@ export default function LoginPage() {
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                     theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-400' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
                   }`}
-                  placeholder="Your name"
+                  placeholder="Ваше имя"
                   required={!isLogin}
                 />
               </div>
             )}
             <div>
-              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                  theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-400' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
-                }`}
-                placeholder="you@example.com"
-                required
-              />
+                <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                    theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-400' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
+                  }`}
+                  placeholder="example@mail.com"
+                  required
+                />
             </div>
             <div>
-              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                  theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-400' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
-                }`}
-                placeholder="••••••••"
-                required
-                minLength={6}
-              />
+                <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Пароль</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                    theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-400' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400'
+                  }`}
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                />
             </div>
 
             {error && (
@@ -175,10 +178,10 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Processing...
+                  Обработка...
                 </span>
               ) : (
-                isLogin ? 'Sign In' : 'Create Account'
+                isLogin ? 'Войти' : 'Создать аккаунт'
               )}
             </button>
           </form>

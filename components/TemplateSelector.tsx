@@ -30,8 +30,8 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
           <div>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">API Templates</h2>
-            <p className="text-sm text-[var(--text-muted)] mt-1">Start with a pre-built API specification</p>
+             <h2 className="text-xl font-semibold text-[var(--text-primary)]">Шаблоны API</h2>
+             <p className="text-sm text-[var(--text-muted)] mt-1">Начните с готовой спецификации API</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg transition-colors">
             <svg className="w-5 h-5 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,7 +51,7 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
               }`}
             >
-              {type === 'all' ? 'All' : type}
+               {type === 'all' ? 'Все' : type === 'rest' ? 'REST' : type === 'graphql' ? 'GraphQL' : 'CRUD'}
             </button>
           ))}
         </div>
@@ -77,9 +77,9 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
                     </div>
                     <p className="text-sm text-[var(--text-secondary)]">{template.description}</p>
                     <div className="mt-3 text-xs text-[var(--text-muted)]">
-                      {Object.keys(template.spec.paths).length} path{Object.keys(template.spec.paths).length !== 1 ? 's' : ''}
-                      {' • '}
-                      {Object.keys(template.spec.components?.schemas || {}).length} schema{Object.keys(template.spec.components?.schemas || {}).length !== 1 ? 's' : ''}
+                       {Object.keys(template.spec.paths).length} путь{Object.keys(template.spec.paths).length !== 1 ? 'ей' : ''}
+                       {' • '}
+                       {Object.keys(template.spec.components?.schemas || {}).length} схем{Object.keys(template.spec.components?.schemas || {}).length !== 1 ? 'ы' : ''}
                     </div>
                   </div>
                   <svg className="w-5 h-5 text-[var(--text-muted)] group-hover:text-blue-400 transition-colors mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

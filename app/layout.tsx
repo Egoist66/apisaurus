@@ -4,8 +4,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export const metadata: Metadata = {
-  title: "API Saurus - API Documentation & Testing Platform",
-  description: "Create, document, test and share your APIs with ease",
+  title: "API Saurus - Платформа документации и тестирования API",
+  description: "Создавайте, документируйте, тестируйте и делитесь своими API легко",
 };
 
 export default function RootLayout({

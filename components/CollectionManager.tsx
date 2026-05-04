@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { Collection, CollectionRequest, Header, Param } from '@/types';
 import { useKeyboardShortcuts } from '@/lib/keyboard-shortcuts';
 import { useEnvironments } from '@/components/EnvironmentManager';
@@ -155,28 +156,29 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
       {/* Requests list */}
       <div className="w-72 bg-[var(--bg-secondary)] border-r border-[var(--border)] flex flex-col">
         <div className="p-4 border-b border-[var(--border)]">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <button
               onClick={onBack}
-              className="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg transition-colors"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-primary)]/60 text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
+              title="Назад"
             >
-              <svg className="w-5 h-5 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-6 14h14" />
-              </svg>
+              <ArrowLeft className="h-4 w-4 shrink-0" />
             </button>
-            <h3 className="font-semibold text-[var(--text-primary)]">{collection.name}</h3>
             <button
               onClick={() => setShowNewRequest(true)}
-              className="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg transition-colors"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-primary)]/60 transition-colors hover:bg-[var(--bg-tertiary)]"
+              title="Новый запрос"
             >
-              <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
+              <Plus className="h-5 w-5 text-blue-400" />
             </button>
           </div>
-          {collection.description && (
-            <p className="text-xs text-[var(--text-secondary)] mt-1">{collection.description}</p>
-          )}
+          <div className="mt-4 min-w-0">
+            <h3 className="font-semibold text-[var(--text-primary)] truncate">{collection.name}</h3>
+            <p className="mt-1 text-xs text-[var(--text-muted)]">{collection.requests.length} запросов в коллекции</p>
+            {collection.description && (
+              <p className="text-xs text-[var(--text-secondary)] mt-2 line-clamp-3">{collection.description}</p>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-2">
@@ -208,11 +210,11 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
               </button>
             </div>
           ))}
-          {collection.requests.length === 0 && (
-            <div className="text-center py-8 text-[var(--text-muted)] text-sm">
-              No requests yet. Create one!
-            </div>
-          )}
+           {collection.requests.length === 0 && (
+             <div className="text-center py-8 text-[var(--text-muted)] text-sm">
+               Пока нет запросов. Создайте первый!
+             </div>
+           )}
         </div>
       </div>
 
@@ -240,7 +242,7 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                   type="text"
                   value={editingRequest.url}
                   onChange={(e) => setEditingRequest({ ...editingRequest, url: e.target.value })}
-                  placeholder="https://api.example.com/endpoint or {{baseUrl}}/endpoint"
+                  placeholder="https://api.example.com/endpoint или {{baseUrl}}/endpoint"
                   className="flex-1 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                 />
                 <button
@@ -248,16 +250,16 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                   disabled={isSaving}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white rounded-lg transition-colors text-sm flex items-center gap-2"
                 >
-                  {showSaveIndicator ? (
-                    <>
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Saved
-                    </>
-                  ) : (
-                    'Save'
-                  )}
+                   {showSaveIndicator ? (
+                     <>
+                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                       </svg>
+                       Сохранено
+                     </>
+                   ) : (
+                     'Сохранить'
+                   )}
                 </button>
                 <button
                   onClick={handleTest}
@@ -270,14 +272,14 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Sending...
+                       Отправка...
                     </>
                   ) : (
                     <>
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
-                      Send
+                       Отправить
                     </>
                   )}
                 </button>
@@ -303,7 +305,7 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                     </button>
                   ))}
                 </div>
-                <span className="text-xs text-[var(--text-muted)]">Ctrl+S to save, Ctrl+Enter to send</span>
+                 <span className="text-xs text-[var(--text-muted)]">Ctrl+S чтобы сохранить, Ctrl+Enter чтобы отправить</span>
               </div>
             </div>
 
@@ -313,8 +315,8 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                 <KeyValueEditor
                   items={editingRequest.params}
                   onChange={(params) => setEditingRequest({ ...editingRequest, params })}
-                  placeholderKey="parameter name"
-                  placeholderValue="value"
+                   placeholderKey="имя параметра"
+                   placeholderValue="значение"
                 />
               )}
 
@@ -322,8 +324,8 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                 <KeyValueEditor
                   items={editingRequest.headers}
                   onChange={(headers) => setEditingRequest({ ...editingRequest, headers })}
-                  placeholderKey="header name"
-                  placeholderValue="value"
+                   placeholderKey="имя заголовка"
+                   placeholderValue="значение"
                 />
               )}
 
@@ -334,18 +336,18 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                     onChange={(e) => setEditingRequest({ ...editingRequest, bodyType: e.target.value as any, body: e.target.value === 'none' ? undefined : editingRequest.body })}
                     className="px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="none">None</option>
-                    <option value="json">JSON</option>
-                    <option value="text">Text</option>
-                    <option value="xml">XML</option>
-                    <option value="x-www-form-urlencoded">x-www-form-urlencoded</option>
-                    <option value="form-data">form-data</option>
+                     <option value="none">Нет</option>
+                     <option value="json">JSON</option>
+                     <option value="text">Текст</option>
+                     <option value="xml">XML</option>
+                     <option value="x-www-form-urlencoded">x-www-form-urlencoded</option>
+                     <option value="form-data">form-data</option>
                   </select>
                   {editingRequest.bodyType !== 'none' && (
                     <textarea
                       value={editingRequest.body || ''}
                       onChange={(e) => setEditingRequest({ ...editingRequest, body: e.target.value })}
-                      placeholder={editingRequest.bodyType === 'json' ? '{\n  "key": "value"\n}' : 'Request body...'}
+                       placeholder={editingRequest.bodyType === 'json' ? '{\n  "key": "value"\n}' : 'Тело запроса...'}
                       className="w-full h-64 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     />
                   )}
@@ -356,7 +358,7 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                 <textarea
                   value={editingRequest.description || ''}
                   onChange={(e) => setEditingRequest({ ...editingRequest, description: e.target.value })}
-                  placeholder="Describe this request..."
+                   placeholder="Опишите этот запрос..."
                   className="w-full h-48 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
               )}
@@ -367,7 +369,7 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
               <div className="border-t border-[var(--border)] bg-[var(--bg-secondary)]/50">
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-semibold text-[var(--text-primary)]">Response</h4>
+                    <h4 className="text-sm font-semibold text-[var(--text-primary)]">Ответ</h4>
                     {testResult.status && (
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
@@ -400,7 +402,7 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
               <svg className="w-16 h-16 mx-auto mb-4 text-[var(--bg-hover)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p className="text-lg font-medium">Select a request or create a new one</p>
+               <p className="text-lg font-medium">Выберите запрос или создайте новый</p>
             </div>
           </div>
         )}
@@ -410,13 +412,13 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
       {showNewRequest && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">New Request</h3>
+             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Новый запрос</h3>
             <input
               type="text"
               value={newRequestName}
               onChange={(e) => setNewRequestName(e.target.value)}
               className="w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Request name"
+               placeholder="Название запроса"
               autoFocus
               onKeyDown={(e) => e.key === 'Enter' && handleCreateRequest()}
             />
@@ -425,13 +427,13 @@ export default function CollectionManager({ collection, onSave, onBack }: Collec
                 onClick={() => setShowNewRequest(false)}
                 className="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
               >
-                Cancel
+                 Отмена
               </button>
               <button
                 onClick={handleCreateRequest}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
               >
-                Create
+                 Создать
               </button>
             </div>
           </div>
@@ -510,7 +512,7 @@ function KeyValueEditor({ items, onChange, placeholderKey, placeholderValue }: K
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
-        Add {placeholderKey}
+         Добавить {placeholderKey}
       </button>
     </div>
   );

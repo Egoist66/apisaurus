@@ -3,9 +3,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 import jsyaml from 'js-yaml';
+import { ArrowLeft } from 'lucide-react';
 import { Project, OpenAPISpec, ApiTemplate } from '@/types';
 import DocViewer from './DocViewer';
 import TemplateSelector from './TemplateSelector';
+import VisualConstructor from './VisualConstructor';
 import { useKeyboardShortcuts } from '@/lib/keyboard-shortcuts';
 
 interface ProjectEditorProps {
@@ -15,7 +17,7 @@ interface ProjectEditorProps {
 }
 
 export default function ProjectEditor({ project, onSave, onBack }: ProjectEditorProps) {
-  const [activeTab, setActiveTab] = useState<'editor' | 'docs'>('editor');
+  const [activeTab, setActiveTab] = useState<'editor' | 'docs' | 'visual'>('editor');
   const [specFormat, setSpecFormat] = useState<'yaml' | 'json'>('yaml');
   const [specContent, setSpecContent] = useState('');
   const [parseError, setParseError] = useState<string | null>(null);
@@ -61,13 +63,12 @@ export default function ProjectEditor({ project, onSave, onBack }: ProjectEditor
 
   useKeyboardShortcuts([
     { key: 's', ctrlKey: true, callback: handleSave, preventDefault: true },
-    { key: '/', callback: () => setActiveTab('docs'), preventDefault: false },
   ]);
 
   const handleImport = () => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.yaml,.yml,.json';
+    input.accept = '.yaml,.yml,.json,.txt';
     input.onchange = (e: any) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -80,6 +81,8 @@ export default function ProjectEditor({ project, onSave, onBack }: ProjectEditor
     };
     input.click();
   };
+
+  // Text import is now handled via VisualConstructor's TextImportModal
 
   const handleExport = () => {
     const extension = specFormat === 'yaml' ? 'yaml' : 'json';
@@ -110,21 +113,23 @@ export default function ProjectEditor({ project, onSave, onBack }: ProjectEditor
   return (
     <div className="h-full flex flex-col">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)] border-b border-[var(--border)]">
-        <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 hover:bg-[var(--bg-tertiary)] rounded-lg transition-colors">
-            <svg className="w-5 h-5 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-6 14h14" />
-            </svg>
+      <div className="flex items-center justify-between gap-4 px-4 py-3 bg-[var(--bg-secondary)] border-b border-[var(--border)]">
+        <div className="flex min-w-0 items-center gap-4">
+          <button
+            onClick={onBack}
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-primary)]/60 text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]"
+            title="Назад"
+          >
+            <ArrowLeft className="h-4 w-4" />
           </button>
-          <div>
+          <div className="min-w-0">
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">{project.name}</h2>
-            <p className="text-xs text-[var(--text-muted)]">{endpointCount} endpoints • {specFormat.toUpperCase()}</p>
+            <p className="text-xs text-[var(--text-muted)]">{endpointCount} эндпоинтов • {specFormat.toUpperCase()}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-[var(--text-muted)] hidden lg:inline">Ctrl+S to save</span>
+          <span className="text-xs text-[var(--text-muted)] hidden lg:inline">Ctrl+S чтобы сохранить</span>
 
           {/* Format toggle */}
           <div className="flex bg-[var(--bg-tertiary)] rounded-lg p-1">
@@ -146,43 +151,51 @@ export default function ProjectEditor({ project, onSave, onBack }: ProjectEditor
             </button>
           </div>
 
-          {/* View toggle */}
-          <div className="flex bg-[var(--bg-tertiary)] rounded-lg p-1">
-            <button
-              onClick={() => setActiveTab('editor')}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                activeTab === 'editor' ? 'bg-blue-600 text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-            >
-              Editor
-            </button>
-            <button
-              onClick={() => setActiveTab('docs')}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                activeTab === 'docs' ? 'bg-blue-600 text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
-            >
-              Docs
-            </button>
-          </div>
+           {/* View toggle */}
+           <div className="flex bg-[var(--bg-tertiary)] rounded-lg p-1">
+             <button
+               onClick={() => setActiveTab('editor')}
+               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                 activeTab === 'editor' ? 'bg-blue-600 text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+               }`}
+             >
+                Редактор
+              </button>
+              <button
+                onClick={() => setActiveTab('visual')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  activeTab === 'visual' ? 'bg-blue-600 text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                Конструктор
+             </button>
+              <button
+                onClick={() => setActiveTab('docs')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  activeTab === 'docs' ? 'bg-blue-600 text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                Документация
+             </button>
+           </div>
 
           <button
             onClick={() => setShowTemplates(true)}
             className="px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors"
           >
-            Templates
+             Шаблоны
           </button>
-          <button
-            onClick={handleImport}
-            className="px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors"
-          >
-            Import
-          </button>
+           <button
+             onClick={handleImport}
+             className="px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors"
+           >
+              Импорт файла
+           </button>
           <button
             onClick={handleExport}
             className="px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors"
           >
-            Export
+             Экспорт
           </button>
           <button
             onClick={handleSave}
@@ -195,18 +208,18 @@ export default function ProjectEditor({ project, onSave, onBack }: ProjectEditor
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Saving...
-              </>
-            ) : showSaveIndicator ? (
-              <>
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                Saved!
-              </>
-            ) : (
-              'Save'
-            )}
+                 Сохранение...
+               </>
+             ) : showSaveIndicator ? (
+               <>
+                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                 </svg>
+                 Сохранено!
+               </>
+             ) : (
+               'Сохранить'
+             )}
           </button>
         </div>
       </div>
@@ -221,38 +234,51 @@ export default function ProjectEditor({ project, onSave, onBack }: ProjectEditor
         </div>
       )}
 
-      {/* Content */}
-      <div className="flex-1 overflow-hidden">
-        {activeTab === 'editor' ? (
-          <Editor
-            height="100%"
-            defaultLanguage={specFormat === 'yaml' ? 'yaml' : 'json'}
-            value={specContent}
-            onChange={(value) => setSpecContent(value || '')}
-            theme="vs-dark"
-            options={{
-              minimap: { enabled: false },
-              fontSize: 14,
-              lineNumbers: 'on',
-              scrollBeyondLastLine: true,
-              automaticLayout: true,
-              tabSize: 2,
-              wordWrap: 'on',
-              padding: { top: 16, bottom: 16 },
-            }}
-          />
-        ) : (
-          <div className="h-full overflow-auto">
-            {parsedSpec ? (
-              <DocViewer spec={parsedSpec} />
-            ) : (
-              <div className="h-full flex items-center justify-center text-[var(--text-secondary)]">
-                Fix parsing errors to preview documentation
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+       {/* Content */}
+       <div className="flex-1 overflow-hidden">
+         {activeTab === 'editor' ? (
+           <Editor
+             height="100%"
+             defaultLanguage={specFormat === 'yaml' ? 'yaml' : 'json'}
+             value={specContent}
+             onChange={(value) => setSpecContent(value || '')}
+             theme="vs-dark"
+             options={{
+               minimap: { enabled: false },
+               fontSize: 14,
+               lineNumbers: 'on',
+               scrollBeyondLastLine: true,
+               automaticLayout: true,
+               tabSize: 2,
+               wordWrap: 'on',
+               padding: { top: 16, bottom: 16 },
+             }}
+           />
+         ) : activeTab === 'visual' ? (
+           parsedSpec ? (
+             <VisualConstructor spec={parsedSpec} onChange={(spec) => {
+               const content = specFormat === 'yaml' 
+                 ? jsyaml.dump(spec, { indent: 2, lineWidth: -1 })
+                 : JSON.stringify(spec, null, 2);
+               setSpecContent(content);
+             }} />
+           ) : (
+             <div className="h-full flex items-center justify-center text-[var(--text-secondary)]">
+               Исправьте ошибки парсинга для визуального конструктора
+             </div>
+           )
+         ) : (
+           <div className="h-full overflow-auto">
+             {parsedSpec ? (
+               <DocViewer spec={parsedSpec} />
+             ) : (
+               <div className="h-full flex items-center justify-center text-[var(--text-secondary)]">
+                 Исправьте ошибки парсинга для предпросмотра документации
+               </div>
+             )}
+           </div>
+         )}
+       </div>
 
       {/* Template Selector Modal */}
       {showTemplates && (

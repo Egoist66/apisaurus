@@ -24,6 +24,9 @@ export default function DashboardPage() {
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectDesc, setNewProjectDesc] = useState('');
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -75,7 +78,16 @@ export default function DashboardPage() {
     if (res.ok) {
       const newProject = await res.json();
       setProjects([...projects, newProject]);
+      setShowNewProjectModal(false);
+      setNewProjectName('');
+      setNewProjectDesc('');
       selectProject(newProject);
+    }
+  };
+
+  const handleCreateProject = () => {
+    if (newProjectName.trim()) {
+      createProject(newProjectName.trim(), newProjectDesc.trim());
     }
   };
 
@@ -175,7 +187,7 @@ export default function DashboardPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <p className="text-[var(--text-secondary)]">Loading API Saurus...</p>
+          <p className="text-[var(--text-secondary)]">Загрузка API Saurus...</p>
         </div>
       </div>
     );
@@ -194,6 +206,7 @@ export default function DashboardPage() {
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         onSelectProjects={() => { setActiveView('projects'); setSelectedProject(null); setSelectedCollection(null); }}
         onSelectTester={() => { setActiveView('tester'); setSelectedProject(null); setSelectedCollection(null); }}
+        onSelectProject={selectProject}
         onSelectCollection={selectCollection}
         onCreateProject={createProject}
         onCreateCollection={createCollection}
@@ -206,19 +219,19 @@ export default function DashboardPage() {
           <div className="h-full p-8 overflow-auto">
             <div className="max-w-6xl mx-auto">
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Your Projects</h1>
-                <p className="text-[var(--text-secondary)]">Create and manage your API documentation projects</p>
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Ваши проекты</h1>
+                <p className="text-[var(--text-secondary)]">Создавайте и управляйте проектами документации API</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <button
-                  onClick={() => setActiveView('projects')}
+                  onClick={() => setShowNewProjectModal(true)}
                   className="border-2 border-dashed border-[var(--border)] hover:border-blue-500 rounded-xl p-8 flex flex-col items-center justify-center text-[var(--text-secondary)] hover:text-blue-400 transition-all group min-h-[200px]"
                 >
                   <svg className="w-12 h-12 mb-3 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  <span className="font-medium">New Project</span>
+                  <span className="font-medium">Новый проект</span>
                 </button>
 
                 {projects.map(project => (
@@ -243,11 +256,11 @@ export default function DashboardPage() {
                       </button>
                     </div>
                     <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1 group-hover:text-blue-400 transition-colors">{project.name}</h3>
-                    <p className="text-sm text-[var(--text-secondary)] line-clamp-2 mb-3">{project.description || 'No description'}</p>
+                    <p className="text-sm text-[var(--text-secondary)] line-clamp-2 mb-3">{project.description || 'Нет описания'}</p>
                     <div className="flex items-center text-xs text-[var(--text-muted)]">
                       <span>{new Date(project.updatedAt).toLocaleDateString()}</span>
                       <span className="mx-2">•</span>
-                      <span>{Object.keys(project.spec.paths || {}).length} endpoints</span>
+                      <span>{Object.keys(project.spec.paths || {}).length} эндпоинтов</span>
                     </div>
                   </div>
                 ))}
@@ -260,10 +273,55 @@ export default function DashboardPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">No projects yet</h3>
-                  <p className="text-[var(--text-muted)]">Create your first API project to get started</p>
+                  <h3 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Пока нет проектов</h3>
+                  <p className="text-[var(--text-muted)]">Создайте свой первый API проект, чтобы начать</p>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {showNewProjectModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-6 w-full max-w-md mx-4">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Новый проект</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Название проекта</label>
+                  <input
+                    type="text"
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    className="w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Мой API"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Описание</label>
+                  <textarea
+                    value={newProjectDesc}
+                    onChange={(e) => setNewProjectDesc(e.target.value)}
+                    className="w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    rows={3}
+                    placeholder="Описание API..."
+                  />
+                </div>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => { setShowNewProjectModal(false); setNewProjectName(''); setNewProjectDesc(''); }}
+                    className="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                  >
+                    Отмена
+                  </button>
+                  <button
+                    onClick={handleCreateProject}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    Создать
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}

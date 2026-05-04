@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# API Saurus
 
-## Getting Started
+Платформа для создания, документирования и тестирования API
 
-First, run the development server:
+## О проекте
+
+API Saurus — это современная платформа для работы с API, построенная на базе Next.js 16. Она объединяет в себе инструменты для создания документации, визуального конструирования API и тестирования эндпоинтов в одном месте.
+
+### Основные возможности
+
+- **Редактор OpenAPI спецификаций** — поддержка YAML и JSON, синтаксический анализ в реальном времени, Monaco Editor
+- **Визуальный конструктор** — создание API без написания кода через интуитивный интерфейс
+- **Встроенный API Tester** — тестирование эндпоинтов с поддержкой всех HTTP методов
+- **Коллекции запросов** — организация и повторное использование HTTP запросов
+- **Переменные окружения** — управление различными средами (dev, staging, prod)
+- **Генерация кода** — создание кода запросов для JavaScript, Python, cURL и др.
+- **Статистика и аналитика** — отслеживание времени ответа и статус-кодов
+- **Тёмная/светлая тема** — комфортная работа в любое время суток
+
+## Технологии
+
+- **Next.js 16** — фреймворк React с поддержкой SSR/SSG
+- **TypeScript** — типобезопасность на всё приложение
+- **Tailwind CSS** — utility-first CSS фреймворк
+- **Monaco Editor** — редактор кода от VS Code
+- **OpenAPI 3.0** — стандарт описания REST API
+- **js-yaml** — парсинг YAML/JSON спецификаций
+
+## Начало работы
+
+### Установка
 
 ```bash
+# Клонирование репозитория
+git clone <repo-url>
+cd apisaurus
+
+# Установка зависимостей
+npm install
+
+# Запуск сервера разработки
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000) в браузере.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Использование
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Регистрация** — создайте аккаунт, используя email и пароль
+2. **Создание проекта** — нажмите «Новый проект» и выберите шаблон (REST API, GraphQL, CRUD) или создайте пустой проект
+3. **Редактирование** — используйте редактор кода или визуальный конструктор для создания OpenAPI спецификации
+4. **Тестирование** — перейдите в раздел «API Tester» и отправляйте запросы к вашему API
 
-## Learn More
+## Структура проекта
 
-To learn more about Next.js, take a look at the following resources:
+```
+apisaurus/
+├── app/
+│   ├── api/              # API routes (Next.js)
+│   │   ├── auth/         # Аутентификация
+│   │   ├── projects/     # Управление проектами
+│   │   ├── collections/  # Управление коллекциями
+│   │   └── test/         # Прокси для тестирования API
+│   ├── components/       # React компоненты
+│   ├── contexts/         # React контексты (Auth, Theme)
+│   └── lib/              # Вспомогательные функции
+├── types/                # TypeScript типы
+├── public/               # Статические файлы
+└── package.json
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Документация
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Подробная документация доступна в приложении на странице [/docs](http://localhost:3000/docs)
 
-## Deploy on Vercel
+## Скрипты
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `npm run dev` — запуск сервера разработки
+- `npm run build` — сборка проекта
+- `npm run start` — запуск production сервера
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Лицензия
+
+Открытый проект для использования в личных и коммерческих целях.

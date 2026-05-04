@@ -3,7 +3,7 @@ import { readJsonFile, writeJsonFile, generateId } from '@/lib/storage';
 import { Collection } from '@/types';
 
 function getCollections(): Collection[] {
-  return readJsonFile<Collection[]>('collections.json') || [];
+  return readJsonFile<Collection[]>('collections.json', []);
 }
 
 function saveCollections(collections: Collection[]): void {
@@ -14,7 +14,7 @@ function getAuthUser(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
   const token = authHeader.split(' ')[1];
-  const tokens = readJsonFile<Record<string, string>>('tokens.json') || {};
+  const tokens = readJsonFile<Record<string, string>>('tokens.json', {});
   return tokens[token] || null;
 }
 

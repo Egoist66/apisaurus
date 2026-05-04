@@ -140,7 +140,7 @@ export default function EnvironmentManager({ onClose }: EnvironmentManagerProps)
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              New Environment
+              Новое окружение
             </button>
           </div>
           {environments.map(env => (
@@ -162,7 +162,7 @@ export default function EnvironmentManager({ onClose }: EnvironmentManagerProps)
                   <button
                     onClick={(e) => { e.stopPropagation(); setActiveEnvironment(env.id); }}
                     className="p-1 hover:bg-green-500/20 rounded transition-colors"
-                    title="Set active"
+                     title="Сделать активным"
                   >
                     <svg className="w-3 h-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -181,7 +181,7 @@ export default function EnvironmentManager({ onClose }: EnvironmentManagerProps)
             </div>
           ))}
           {environments.length === 0 && (
-            <p className="px-3 py-4 text-xs text-[var(--text-muted)] text-center">No environments yet</p>
+                 <p className="px-3 py-4 text-xs text-[var(--text-muted)] text-center">Пока нет окружений</p>
           )}
         </div>
 
@@ -213,14 +213,14 @@ export default function EnvironmentManager({ onClose }: EnvironmentManagerProps)
                       type="text"
                       value={variable.key}
                       onChange={(e) => updateVariable(editingEnv.id, index, 'key', e.target.value)}
-                      placeholder="Variable name"
+                       placeholder="Имя переменной"
                       className="flex-1 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                       type="text"
                       value={variable.value}
                       onChange={(e) => updateVariable(editingEnv.id, index, 'value', e.target.value)}
-                      placeholder="Value"
+                       placeholder="Значение"
                       className="flex-1 px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
@@ -240,14 +240,14 @@ export default function EnvironmentManager({ onClose }: EnvironmentManagerProps)
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  Add Variable
+                   Добавить переменную
                 </button>
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-center h-full text-[var(--text-muted)] text-sm">
-              Select an environment to edit variables
-            </div>
+             <div className="flex items-center justify-center h-full text-[var(--text-muted)] text-sm">
+               Выберите окружение для редактирования переменных
+             </div>
           )}
         </div>
       </div>

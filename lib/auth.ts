@@ -25,7 +25,7 @@ export function generateToken(): string {
 }
 
 export function getUsers(): User[] {
-  return readJsonFile<User[]>('users.json') || [];
+  return readJsonFile<User[]>('users.json', []);
 }
 
 export function saveUsers(users: User[]): void {
@@ -55,7 +55,7 @@ export function createUser(email: string, name: string, password: string): User 
 }
 
 export function getTokens(): Record<string, string> {
-  return readJsonFile<Record<string, string>>('tokens.json') || {};
+  return readJsonFile<Record<string, string>>('tokens.json', {});
 }
 
 export function saveTokens(tokens: Record<string, string>): void {

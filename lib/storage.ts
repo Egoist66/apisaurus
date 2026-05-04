@@ -9,11 +9,11 @@ export function ensureDataDir() {
   }
 }
 
-export function readJsonFile<T>(filename: string): T {
+export function readJsonFile<T>(filename: string, defaultValue: T): T {
   ensureDataDir();
   const filePath = path.join(DATA_DIR, filename);
   if (!fs.existsSync(filePath)) {
-    return {} as T;
+    return defaultValue;
   }
   const data = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(data);
